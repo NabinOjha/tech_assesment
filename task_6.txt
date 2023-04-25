@@ -1,0 +1,33 @@
+class System < ApplicationRecord
+  has_many :shops, dependent: :nullify
+end
+
+class Shop < ApplicationRecord
+  belongs_to :system
+  has_many :categories, dependent: :destroy
+  has_many :products, dependent: :destroy
+end
+
+class Category < ApplicationRecord
+  # this is optional so that user can use categories provided by the system and can also add their own categories if needed
+  belongs_to :shop, optional: true
+  has_many :product_categories, dependent: :destroy
+  has_many :products, through: :product_categories
+end
+
+class ProductCategory < ApplicationRecord
+  belongs_to :category
+  belongs_to :product
+end
+
+class Product < ApplicationRecord
+  belongs_to :shop
+  has_many :product_categories, dependent: :destroy
+  has_many :categories, through: :product_categories
+  has_many :product_pricehistories, dependent: :destroy
+end
+
+class ProductPricehistory < ApplicationRecord
+  # can have price, start_date, end_date to store and hold the history of prices for each product
+  belongs_to :product
+end
